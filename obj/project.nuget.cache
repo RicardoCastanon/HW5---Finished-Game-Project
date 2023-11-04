@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "9kI0+64Z/6EYmWw5YH5yiismXqKlgXq5EUQOBafODfzS22HUQhPiQ1cZypwWvHJj4Er1Hb3eyiee6KrEWMVoEg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ricar\\Documents\\School\\2023-24 Senior Year\\Fall 2023 - Programming Paradigms\\HW5 - Finished Game Project\\HW5 - Finished Game Project.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ricar\\.nuget\\packages\\fsharp.core\\7.0.401\\fsharp.core.7.0.401.nupkg.sha512"
+  ],
+  "logs": []
+}
