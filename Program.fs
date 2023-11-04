@@ -186,4 +186,4 @@ let displayResult result =
     | Success s -> printf "%s" s
     | Failure f -> printf "%s" f
 
-gameWorld |> move south |> bind (describeCurrentRoom) |> ignore
+gameWorld |> move south |> bind (describeCurrentRoom) // |> ignore
