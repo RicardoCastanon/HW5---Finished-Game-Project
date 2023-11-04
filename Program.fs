@@ -124,3 +124,66 @@ let player: Player =
 let gameWorld: World =
     { Rooms = allRooms |> Seq.map (fun room -> (room.Id, room)) |> Map.ofSeq
       Player = player }
+
+// Part 3: Defining a Logic Pipeline
+
+// --------- Logic ---------
+type Result<'TSuccess, 'TFailure> =
+    | Success of 'TSuccess
+    | Failure of 'TFailure
+
+let bind processFunc lastResult =
+    match lastResult with
+    | Success s -> processFunc s
+    | Failure f -> Failure f
+
+let (>>=) x f = bind f x
+
+let switch processFunc input = Success(processFunc input)
+
+let getRoom world roomId =
+    match world.Rooms.TryFind roomId with
+    | Some room -> Success room
+    | None -> Failure "Room does not exist!"
+
+let describeDetails details =
+    sprintf "\n\n%s\n\n%s\n\n" details.Name details.Description
+
+let extractDetailsFromRoom (room: Room) = room.Details
+
+let describeCurrentRoom world =
+    world.Player.Location
+    |> getRoom world
+    |> (bind (switch extractDetailsFromRoom) >> bind (switch describeDetails))
+
+let north ({ North = northExit }: Exits) = northExit
+let south ({ South = southExit }: Exits) = southExit
+let east ({ East = eastExit }: Exits) = eastExit
+let west ({ West = westExit }: Exits) = westExit
+
+let getCurrentRoom world = world.Player.Location |> getRoom world
+
+let setCurrentRoom world room =
+    { world with
+        Player = { world.Player with Location = room.Id } }
+
+let getExit direction exits =
+    match (direction exits) with
+    | PassableExit(_, roomId) -> Success roomId
+    | LockedExit(_, _, _) -> Failure "There is a locked door in that direction."
+    | NoExit(_) -> Failure "There is no room in that direction."
+
+let move direction world =
+    world
+    |> getCurrentRoom
+    >>= switch (fun room -> room.Exits)
+    >>= getExit direction
+    >>= getRoom world
+    >>= switch (setCurrentRoom world)
+
+let displayResult result =
+    match result with
+    | Success s -> printf "%s" s
+    | Failure f -> printf "%s" f
+
+gameWorld |> move south |> bind (describeCurrentRoom) |> ignore
